@@ -36,14 +36,43 @@ def write_to_csv(data:list, headers:list, path:str)->None:
 
 def read_csv(filepath:str)->list:
     data=[]
-    with open(file_path, mode='r', newline='') as csvfile:
+    with open(filepath, mode='r', newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             data.append(row)
     return data
 
 def main():
-    pass
+    #1 import data
+    transactions = read_csv('transactions/2024-05-14.csv')
+    users = read_csv('users/users.csv')
 
+    over_10k = []
+    for transaction in transactions:
+        if float(transaction.get('transaction')) >= 10000.00:
+            over_10k.append(transaction)
+
+    
+
+    #2 filter out transactions over 10k
+
+    #3 match transactions to users
+    for item in over_10k:
+        id = item.get('user')
+        user = [user for user in users if user.get('id') == id][0]
+        item['user'] = user
+
+    #4 write to csv
+    headers = ['date', 'guest', 'amount']
+    data = []
+    for item in over_10k:
+        data.append({
+            'date' : item.get('timestamp'),
+            'guest' : item.get('user').get('first_name') + ' ' + item.get('user').get('last_name'),
+            'amount' : item.get('transaction')
+        })
+
+    for d in data:
+        print(d)
 if __name__ == "__main__":
     main()
