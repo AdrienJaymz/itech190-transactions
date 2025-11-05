@@ -42,27 +42,23 @@ def read_csv(filepath:str)->list:
             data.append(row)
     return data
 
-def main():
-    #1 import data
-    transactions = read_csv('transactions/2024-05-14.csv')
-    users = read_csv('users/users.csv')
+def write_daily_over_10k_report(transactions:list, users:list, file:str):
 
+    #filter out transactions over 10k
     over_10k = []
     for transaction in transactions:
-        if float(transaction.get('transaction')) >= 10000.00:
+        if float(transaction.get('transaction')) >= 10000.00 or float(transaction.get('transaction')) <= - 10000.00:
             over_10k.append(transaction)
+  
 
-    
-
-    #2 filter out transactions over 10k
-
-    #3 match transactions to users
+    #match transactions to users
     for item in over_10k:
         id = item.get('user')
         user = [user for user in users if user.get('id') == id][0]
         item['user'] = user
 
-    #4 write to csv
+
+    #write to csv
     headers = ['date', 'guest', 'amount']
     data = []
     for item in over_10k:
@@ -72,7 +68,16 @@ def main():
             'amount' : item.get('transaction')
         })
 
-    for d in data:
-        print(d)
+    write_to_csv(data, headers, f"reports/{file}.csv")
+
+def main():
+    #1 import data
+
+    transactions = read_csv('transactions/2024-05-14.csv')
+    users = read_csv('users/users.csv')
+
+    write_daily_over_10k_report(transactions, users,'2024-05-14-2')
+
+    
 if __name__ == "__main__":
     main()
