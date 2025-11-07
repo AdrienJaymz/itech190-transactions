@@ -70,14 +70,51 @@ def write_daily_over_10k_report(transactions:list, users:list, file:str):
 
     write_to_csv(data, headers, f"reports/{file}.csv")
 
+def get_total_num_transactions(transactions:list)->int:
+    return len(transactions)
+
+def get_sum_of_transactions(transactions:list)->float:
+    return sum(transactions)
+
+def get_avg_of_transactions(transactions:list)->float:
+    return sum(transactions) /len(transactions)
+
+def get_cash_in_out_report(transactions:list)->dict:
+    positive = [float(transaction.get('transaction')) for transaction in transactions if float(transaction.get('transaction')) >=0]
+    negative = [float(transaction.get('transaction')) for transaction in transactions if float(transaction.get('transaction')) <0]
+    net = [float(transaction.get('transaction')) for transaction in transactions]
+    return{
+        "number_transactions_positive": get_total_num_transactions(positive),
+        "sum_transactions_positive": get_sum_of_transactions(positive),
+        "average_transactions_positive": get_avg_of_transactions(positive),
+        "number_transactions_negative": get_total_num_transactions(negative),
+        "sum_transactions_negative": get_sum_of_transactions(negative),
+        "average_transactions_negative": get_avg_of_transactions(negative),
+        "number_transactions_net": get_total_num_transactions(net),
+        "sum_transactions_net": get_sum_of_transactions(net),
+        "average_transactions_net": get_avg_of_transactions(net),
+    }
+    
+
+
 def main():
     #1 import data
 
     transactions = read_csv('transactions/2024-05-14.csv')
     users = read_csv('users/users.csv')
-
-    write_daily_over_10k_report(transactions, users,'2024-05-14-2')
-
     
+    #over 10k report
+    #write_daily_over_10k_report(transactions, users,'2024-05-14-2')
+
+    #get total number of transactions
+    #total = get_total_num_transactions(transactions)
+    #print(f"total transactions: {total}")
+
+    #cash in cash out
+    #in_total, in_len, in_avg, out, net
+    cash_in_out_report = get_cash_in_out_report(transactions)
+    for key,val in cash_in_out_report.items():
+        print(key, val)
+
 if __name__ == "__main__":
     main()
