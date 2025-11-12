@@ -25,6 +25,7 @@ Your other repsonsibilities include writing a daily transactions report
 
 #import libraries
 import csv
+from matplotlib import pyplot as plt
 
 
 def write_to_csv(data:list, headers:list, path:str)->None:
@@ -94,7 +95,33 @@ def get_cash_in_out_report(transactions:list)->dict:
         "sum_transactions_net": get_sum_of_transactions(net),
         "average_transactions_net": get_avg_of_transactions(net),
     }
-    
+
+def get_num_transactions_by_hour(transactions:list)->dict:
+    num_trans = {}
+    for transaction in transactions:
+        date = transaction.get('timestamp')
+        date = date.split('T')[1]
+        date = date.slpit(':')[0]
+
+        if num_trans.get(date) is None:
+            num_trans[date] = 0
+
+        for key,val in num_trans.items():
+            print(f"{key: <10}{val}")
+
+        return {
+            'x': num_trans.keys()
+            'y': num_trans.val
+        }
+
+def get_avg_transaction_by_hour(transactions:list)->dict:
+    pass
+
+def get_sum_of_transactions_by_hour(transactions:list)->dict:
+    pass
+
+def plot_data(config:dict)->None:
+    pass
 
 
 def main():
@@ -115,6 +142,11 @@ def main():
     cash_in_out_report = get_cash_in_out_report(transactions)
     for key,val in cash_in_out_report.items():
         print(key, val)
+
+    x = [t.get('timestamp')for t in transactions]
+    y = [float(t.get('transaction')) for t in transactions]
+
+    plt.show
 
 if __name__ == "__main__":
     main()
